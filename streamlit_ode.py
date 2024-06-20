@@ -27,7 +27,7 @@ is_coupled_ode_system = "Looks like you have a system of coupled ODEs. "
 
 G.add_node(3, label=is_single_ode)
 G.add_node(4, label=is_coupled_ode_system)
-G.add_edge(1, 3, label='just one unknown function')
+G.add_edge(1, 3, label='just one function')
 G.add_edge(1, 4, label='more than one')
 
 is_firstorder = r'''
@@ -36,8 +36,8 @@ So we have a single first-order ODE. Does the right-hand side $F$ depend $x$ or 
 is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
 G.add_node(6, label=is_higher_than_first_order)
-G.add_edge(3, 5, label='first order')
-G.add_edge(3, 6, label='higher order')
+G.add_edge(3, 5, label='yes, first order')
+G.add_edge(3, 6, label='no, higher order')
 
 can_be_integrated_directly = r'''
 You're in luck! This ODE is as simple as can be. You can just throw an integral onto the RHS and write
@@ -73,9 +73,9 @@ Does the RHS perhaps factorise like this: $F(x, y) = f(x)g(y)$?
 G.add_node(7, label=can_be_integrated_directly)
 G.add_node(8, label=is_autonomous)
 G.add_node(9, label=is_nonautonomous)
-G.add_edge(5, 7, label='$F$ contains $x$ only')
-G.add_edge(5, 8, label='$F$ contains $y$ only')
-G.add_edge(5, 9, label='$F$ contains both')
+G.add_edge(5, 7, label='$F$ is a function of $x$ only')
+G.add_edge(5, 8, label='$F$ is a function $y$ only')
+G.add_edge(5, 9, label='$F$ contains both variables')
 
 is_separable = r'''
 Nice! This means that your ODE is _separable_. What this means is that you can accumulate everything $y$-dependent on the LHS, and everything $x$-dependent on the RHS, and integrate:
@@ -106,6 +106,9 @@ def get_desc_node_data(node):
 if "current_node" not in st.session_state:
     st.session_state.current_node = 0
 
+if "node_history" not in st.session_state:
+    st.session_state.node_history = [st.session_state.current_node]
+
 # this renders the label of the current node, and a button for every outgoing edge
 @st.experimental_fragment
 def draw_buttons():
@@ -114,15 +117,33 @@ def draw_buttons():
     st.markdown(G.nodes[current_node]['label'])
     node_data = get_desc_node_data(current_node)
     #st.text(f'outgoing data: {node_data}')
+    st.text(st.session_state.node_history)
     if node_data: # may be empty if terminal node
-        cols = st.columns(len(node_data))
-        for (reply, next_node), col in zip(node_data.items(), cols):
+        # render one extra button if we are not at the start
+        if len(st.session_state.node_history) > 1:
+            ncols = len(node_data) + 1
+            cols = st.columns(ncols)
+            cols_for_desc_nodes = cols[:-1]            
+        else:
+            ncols = len(node_data)
+            cols = st.columns(ncols)
+            cols_for_desc_nodes = cols
+        for (reply, next_node), col in zip(node_data.items(), cols_for_desc_nodes):
             #st.text(reply + ' : ' + str(next_node))
             # define callback that traverses the clicked edge
-            def on_click(next_node):
+            def traverse_graph(next_node):
                 st.session_state.current_node = next_node
-            # render button
-            col.button(label=reply, on_click=on_click, args=[next_node])
+                st.session_state.node_history.append(next_node)
+
+            # render buttons
+            col.button(label=reply, on_click=traverse_graph, args=[next_node])
+        
+        # render one extra button for "go back"
+        def go_back():
+            st.session_state.node_history = st.session_state.node_history[:-1]
+            st.session_state.current_node = st.session_state.node_history[-1]
+        if len(st.session_state.node_history) > 1:
+            cols[-1].button(label="go back", on_click=go_back)
 
 # streamlit app rendering begins here
 st.title("So you've got this ODE ...")
