@@ -145,5 +145,5 @@ def draw_buttons():
             cols[-1].button(label="go back", on_click=go_back)
 
 # streamlit app rendering begins here
-st.title("So you've got this ODE ...")
+st.header("So you've got this ODE ...", divider='rainbow')
 draw_buttons()
