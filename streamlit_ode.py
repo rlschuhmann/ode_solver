@@ -37,7 +37,7 @@ is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
 G.add_node(6, label=is_higher_than_first_order)
 G.add_edge(3, 5, label='yes')
-G.add_edge(3, 6, label='no')
+#G.add_edge(3, 6, label='no')
 
 # add return edges
 for node in G.nodes:
@@ -59,16 +59,19 @@ if "current_node" not in st.session_state:
 @st.experimental_fragment
 def draw_buttons():
     current_node = st.session_state.current_node
+    #st.text(f'current node number: {current_node}')
     st.markdown(G.nodes[current_node]['label'])
     node_data = get_desc_node_data(current_node)
+    #st.text(f'outgoing data: {node_data}')
     if node_data: # may be empty if terminal node
         cols = st.columns(len(node_data))
-        for (reply, next_node), col in zip(sorted(node_data.items(), reverse=True), cols):
+        for (reply, next_node), col in zip(node_data.items(), cols):
+            #st.text(reply + ' : ' + str(next_node))
             # define callback that traverses the clicked edge
-            def on_click():
+            def on_click(next_node):
                 st.session_state.current_node = next_node
             # render button
-            col.button(label=reply, on_click=on_click)
+            col.button(label=reply, on_click=on_click, args=[next_node])
 
 # streamlit app rendering begins here
 st.title("So you've got this ODE ...")
