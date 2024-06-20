@@ -31,7 +31,7 @@ G.add_edge(1, 3, label='just one unknown function')
 G.add_edge(1, 4, label='more than one')
 
 is_firstorder = r'''
-So we have a single first-order ODE. Does the right-hand side $F$ contain $y$ at all?
+So we have a single first-order ODE. Does the right-hand side $F$ depend $x$ or $y$ at all?
 '''
 is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
@@ -39,6 +39,57 @@ G.add_node(6, label=is_higher_than_first_order)
 G.add_edge(3, 5, label='first order')
 G.add_edge(3, 6, label='higher order')
 
+can_be_integrated_directly = r'''
+You're in luck! This ODE is as simple as can be. You can just throw an integral onto the RHS and write
+$$
+y(x) = y_0 + \int_{x_0}^{x} d\tilde x\,F(\tilde x),
+$$
+where $y(x_0)=y_0$ is your given initial condition.
+'''
+is_autonomous = r'''
+So your equation looks like 
+$$
+y'(x) = F(y).
+$$
+This is known as an _autonomous_ ODE. We can solve it like a separable one: shuffle all $y$-dependent stuff onto the LHS, all, $x$-dependent stuff onto the RHS, and integrate:
+$$
+\int \frac{dy}{g(y)} = \int dx + C,
+$$
+or if you'd prefer to avoid futzing around with the integration constant $C$ in favour of the initial value $y(x_0) = y_0$, then you may write it as
+$$
+\int_{y_0}^{y(x)} \frac{d\tilde y}{g(\tilde y)} = \int_{x_0}^x d\tilde x = x - x_0.
+$$
+Now all that is left to do is: crack the LHS integral, and manipulate until you manage to isolate $y(x)$.
+
+You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This is a general and very useful feature of autonomous ODEs.
+'''
+is_nonautonomous = r'''
+So your equation looks like
+$$
+y'(x) = F(x, y).
+$$
+Does the RHS perhaps factorise like this: $F(x, y) = f(x)g(y)$?
+'''
+G.add_node(7, label=can_be_integrated_directly)
+G.add_node(8, label=is_autonomous)
+G.add_node(9, label=is_nonautonomous)
+G.add_edge(5, 7, label='$F$ contains $x$ only')
+G.add_edge(5, 8, label='$F$ contains $y$ only')
+G.add_edge(5, 9, label='$F$ contains both')
+
+is_separable = r'''
+Nice! This means that your ODE is _separable_. What this means is that you can accumulate everything $y$-dependent on the LHS, and everything $x$-dependent on the RHS, and integrate:
+$$
+\frac{dy}{dx} = f(x)g(y) \Rightarrow \int \frac{dy}{g(y)} = \int dx\,f(x) + C,
+$$
+where we can mash both integration constants into one. Now you need to crack both integrals, and isolate $y(x)$ on the LHS, and you are done.
+If you have an initial value $y(x_0) = y_0$, then you can write this cleaner by incorporating it - obviously that will remove the integration constant $C$:
+$$
+\int_{y_0}^{y(x)} d\tilde y\frac{1}{g(\tilde y)} = \int_{x_0}^xd\tilde x f(\tilde x)
+$$
+'''
+G.add_node(10, label=is_separable)
+G.add_edge(9, 10, label='yes, it factorises')
 # add return edges
 for node in G.nodes:
     if node != 0:
