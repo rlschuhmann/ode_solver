@@ -10,8 +10,8 @@ is_pde = "This is not an ODE, but rather a partial differential equation (PDE). 
 G.add_node(1, label=is_ode)
 G.add_node(2, label=is_pde)
 
-G.add_edge(0, 1, label='no')
-G.add_edge(0, 2, label='yes')
+G.add_edge(0, 1, label='no, just one kind of derivative')
+G.add_edge(0, 2, label='yes, more than one')
 
 is_single_ode = r'''
 Let's standardise further: we have a single unknown function, let's call it $y(x)$. Rearrange your equation such that the highest derivative is isolated on the left hand side. Your equation now looks like 
@@ -27,8 +27,8 @@ is_coupled_ode_system = "Looks like you have a system of coupled ODEs. "
 
 G.add_node(3, label=is_single_ode)
 G.add_node(4, label=is_coupled_ode_system)
-G.add_edge(1, 3, label='no')
-G.add_edge(1, 4, label='yes')
+G.add_edge(1, 3, label='just one unknown function')
+G.add_edge(1, 4, label='more than one')
 
 is_firstorder = r'''
 So we have a single first-order ODE. Does the right-hand side $F$ contain $y$ at all?
@@ -36,8 +36,8 @@ So we have a single first-order ODE. Does the right-hand side $F$ contain $y$ at
 is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
 G.add_node(6, label=is_higher_than_first_order)
-G.add_edge(3, 5, label='yes')
-#G.add_edge(3, 6, label='no')
+G.add_edge(3, 5, label='first order')
+G.add_edge(3, 6, label='higher order')
 
 # add return edges
 for node in G.nodes:
