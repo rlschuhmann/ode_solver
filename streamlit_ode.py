@@ -31,7 +31,7 @@ G.add_edge(1, 3, label='just one function')
 G.add_edge(1, 4, label='more than one')
 
 is_firstorder = r'''
-So we have a single first-order ODE. Does the right-hand side $F$ depend $x$ or $y$ at all?
+So we have a single first-order ODE. Does the right-hand side $F$ depend on $x$ or $y$ at all?
 '''
 is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
