@@ -5,13 +5,39 @@ import streamlit as st
 G = nx.DiGraph()
 start = r"Let's start with this: does your differential equation contain derivatives with respect to more than variable? For example, you may have both $\frac{\partial}{\partial t}$ and $\frac{\partial}{\partial x}$ in the equation?"
 G.add_node(0, label=start)
-is_ode = "Then it is an ODE! Let's standardise things a little: from now on, the variable with respect to which we derive is always called $x$. Is there more than one function of $x$ kicking around in your equation?"
+is_ode = "Then it is an ODE! Let's standardise things a little: from now on, the variable with respect to which we derive is always called $x$. Is there more than one unknown function of $x$ kicking around in your equation?"
 is_pde = "This is not an ODE, but rather a partial differential equation (PDE). These are much more advanced and require completely different techniques."
 G.add_node(1, label=is_ode)
 G.add_node(2, label=is_pde)
 
 G.add_edge(0, 1, label='no')
 G.add_edge(0, 2, label='yes')
+
+is_single_ode = r'''
+Let's standardise further: we have a single unknown function, let's call it $y(x)$. Rearrange your equation such that the highest derivative is isolated on the left hand side. Your equation now looks like 
+$$
+y^{(n)}(x) = \frac{d^n y(x)}{dx^n} = F\left(x, y, y', y'', \ldots, y^{(n-1)}\right)
+$$
+for some possibly complicated function $F(\ldots)$. 
+The order of the highest derivative, $n$, is now the _order of your ODE_. 
+
+Is $n=1$?
+'''
+is_coupled_ode_system = "Looks like you have a system of coupled ODEs. "
+
+G.add_node(3, label=is_single_ode)
+G.add_node(4, label=is_coupled_ode_system)
+G.add_edge(1, 3, label='no')
+G.add_edge(1, 4, label='yes')
+
+is_firstorder = r'''
+So we have a single first-order ODE. Does the right-hand side $F$ contain $y$ at all?
+'''
+is_higher_than_first_order = r"Is $n=2$?"
+G.add_node(5, label=is_firstorder)
+G.add_node(6, label=is_higher_than_first_order)
+G.add_edge(3, 5, label='yes')
+G.add_edge(3, 6, label='no')
 
 # add return edges
 for node in G.nodes:
