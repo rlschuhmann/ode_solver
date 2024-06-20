@@ -117,7 +117,6 @@ def draw_buttons():
     st.markdown(G.nodes[current_node]['label'])
     node_data = get_desc_node_data(current_node)
     #st.text(f'outgoing data: {node_data}')
-    st.text(st.session_state.node_history)
     if node_data: # may be empty if terminal node
         # render one extra button if we are not at the start
         if len(st.session_state.node_history) > 1:
