@@ -147,3 +147,4 @@ def draw_buttons():
 # streamlit app rendering begins here
 st.header("So you've got this ODE ...", divider='rainbow')
 draw_buttons()
+st.page_link(label="Comments? Drop me an email!", page="https://cosmorobb.science")
