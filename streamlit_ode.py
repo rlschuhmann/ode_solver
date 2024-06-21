@@ -53,7 +53,7 @@ y'(x) = F(y).
 $$
 This is known as an _autonomous_ ODE. We can solve it like a separable one: shuffle all $y$-dependent stuff onto the LHS, all, $x$-dependent stuff onto the RHS, and integrate:
 $$
-\int \frac{dy}{F(y)} = \int dx + C,
+\int \frac{dy}{F(y)} = \int dx = x + C,
 $$
 or if you'd prefer to avoid futzing around with the integration constant $C$ in favour of the initial value $y(x_0) = y_0$, then you may write it as
 $$
