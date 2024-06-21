@@ -5,7 +5,7 @@ import streamlit as st
 G = nx.DiGraph()
 start = r"Let's start with this: does your differential equation contain derivatives with respect to more than variable? For example, you may have both $\frac{\partial}{\partial t}$ and $\frac{\partial}{\partial x}$ in the equation?"
 G.add_node(0, label=start)
-is_ode = "Then it is an ODE! Let's standardise things a little: from now on, the variable with respect to which we derive is always called $x$. Is there more than one unknown function of $x$ kicking around in your equation?"
+is_ode = "Then it is an ODE! Let's standardise things a little: from now on, the variable with respect to which we derive is always called $x$, and $x$-derivatives will be denoted with a prime $(\ldots)'$. Is there more than one unknown function of $x$ kicking around in your equation?"
 is_pde = "This is not an ODE, but rather a partial differential equation (PDE). These are much more advanced and require completely different techniques."
 G.add_node(1, label=is_ode)
 G.add_node(2, label=is_pde)
@@ -53,11 +53,11 @@ y'(x) = F(y).
 $$
 This is known as an _autonomous_ ODE. We can solve it like a separable one: shuffle all $y$-dependent stuff onto the LHS, all, $x$-dependent stuff onto the RHS, and integrate:
 $$
-\int \frac{dy}{g(y)} = \int dx + C,
+\int \frac{dy}{F(y)} = \int dx + C,
 $$
 or if you'd prefer to avoid futzing around with the integration constant $C$ in favour of the initial value $y(x_0) = y_0$, then you may write it as
 $$
-\int_{y_0}^{y(x)} \frac{d\tilde y}{g(\tilde y)} = \int_{x_0}^x d\tilde x = x - x_0.
+\int_{y_0}^{y(x)} \frac{d\tilde y}{F(\tilde y)} = \int_{x_0}^x d\tilde x = x - x_0.
 $$
 Now all that is left to do is: crack the LHS integral, and manipulate until you manage to isolate $y(x)$.
 
