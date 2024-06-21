@@ -74,7 +74,7 @@ G.add_node(7, label=can_be_integrated_directly)
 G.add_node(8, label=is_autonomous)
 G.add_node(9, label=is_nonautonomous)
 G.add_edge(5, 7, label='$F$ is a function of $x$ only')
-G.add_edge(5, 8, label='$F$ is a function $y$ only')
+G.add_edge(5, 8, label='$F$ is a function of $y$ only')
 G.add_edge(5, 9, label='$F$ contains both variables')
 
 is_separable = r'''
