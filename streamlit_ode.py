@@ -61,7 +61,7 @@ $$
 $$
 Now all that is left to do is: crack the LHS integral, and manipulate until you manage to isolate $y(x)$.
 
-You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This is a general and very useful feature of autonomous ODEs.
+You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This strictly constrains the possible shape of $y(x)$, so we found a general and very useful feature of autonomous ODEs: shifting one solution in $x$-direction will again yield a solution.
 '''
 is_nonautonomous = r'''
 So your equation looks like
