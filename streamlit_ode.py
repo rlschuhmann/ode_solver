@@ -118,16 +118,9 @@ def draw_buttons():
     node_data = get_desc_node_data(current_node)
     #st.text(f'outgoing data: {node_data}')
     if node_data: # may be empty if terminal node
-        # render one extra button if we are not at the start
-        if len(st.session_state.node_history) > 1:
-            ncols = len(node_data) + 1
-            cols = st.columns(ncols)
-            cols_for_desc_nodes = cols[:-1]            
-        else:
-            ncols = len(node_data)
-            cols = st.columns(ncols)
-            cols_for_desc_nodes = cols
-        for (reply, next_node), col in zip(node_data.items(), cols_for_desc_nodes):
+
+        container = st.container()
+        for (reply, next_node) in node_data.items():
             #st.text(reply + ' : ' + str(next_node))
             # define callback that traverses the clicked edge
             def traverse_graph(next_node):
@@ -135,14 +128,20 @@ def draw_buttons():
                 st.session_state.node_history.append(next_node)
 
             # render buttons
-            col.button(label=reply, on_click=traverse_graph, args=[next_node])
+            container.button(label=reply, 
+                             on_click=traverse_graph, 
+                             args=[next_node],
+                             use_container_width=True)
+
         
         # render one extra button for "go back"
         def go_back():
             st.session_state.node_history = st.session_state.node_history[:-1]
             st.session_state.current_node = st.session_state.node_history[-1]
         if len(st.session_state.node_history) > 1:
-            cols[-1].button(label="go back", on_click=go_back)
+            container.button(label="go back", 
+                             on_click=go_back,
+                             use_container_width=True)
 
 # streamlit app rendering begins here
 st.header("So you've got this ODE ...", divider='rainbow')
