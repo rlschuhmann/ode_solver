@@ -27,8 +27,8 @@ is_coupled_ode_system = "Looks like you have a system of coupled ODEs. "
 
 G.add_node(3, label=is_single_ode)
 G.add_node(4, label=is_coupled_ode_system)
-G.add_edge(1, 3, label='just one function')
-G.add_edge(1, 4, label='more than one')
+G.add_edge(1, 3, label='just one unknown function')
+G.add_edge(1, 4, label='more than one unknown function')
 
 is_firstorder = r'''
 So we have a single first-order ODE. Does the right-hand side $F$ depend on $x$ or $y$ at all?
@@ -36,8 +36,8 @@ So we have a single first-order ODE. Does the right-hand side $F$ depend on $x$ 
 is_higher_than_first_order = r"Is $n=2$?"
 G.add_node(5, label=is_firstorder)
 G.add_node(6, label=is_higher_than_first_order)
-G.add_edge(3, 5, label='yes, first order')
-G.add_edge(3, 6, label='no, higher order')
+G.add_edge(3, 5, label="yes, $y'$ is the highest derivative to appear")
+G.add_edge(3, 6, label='no, we have higher derivatives of $y$ than the first')
 
 can_be_integrated_directly = r'''
 You're in luck! This ODE is as simple as can be. You can just throw an integral onto the RHS and write
