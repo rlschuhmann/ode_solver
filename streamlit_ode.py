@@ -148,7 +148,27 @@ G.add_edge(14, 13, label='that could work!')
 G.add_edge(13, 20, label='please tell me more how to apply this to higher-order ODEs')
 G.add_edge(20, 13, label='please let me review variation of constants for first-order ODEs')
 
+is_nonlinear_firstorder = r'''
+Let's check if your equation is of the _Bernoulli_ type: does $y$ appear as a power $\nu$, such that you can bring the equation into the form
+$$
+y' + P(x) y = Q(x)y^\nu?
+$$
+Here, $P$ and $Q$ can be any functions of $x$, and $\nu$ can be any _real_ number except 0 (then we'd have used integrating factor or variation of constants) or 1 (then we'd have used separation of variables). Note: in the literature, you will see $n$ in place of $\nu$, but we already use $n$ to denote the order of the highest derivative.
+'''
 
+is_bernoulli = r'''
+Great! The way to crack it is to pull a clever substitution out of a hat. Define a new function 
+$$
+u(x) = y(x)^{1-\nu}
+$$
+In your original ODE, replace all $y$, $y'$ by $u$, $u'$ and after some algebra you will have a _linear_ first-order ODE for $u(x)$ which you can solve by conventional means. Then take that to the power $\frac{1}{1-\nu}$ to get $y$.
+'''
+
+G.add_node(15, label=is_nonlinear_firstorder)
+G.add_node(16, label=is_bernoulli)
+G.add_edge(14, 15, label='that will not help')
+G.add_edge(15, 16, label='yes it does!')
+G.add_edge(16, 12, label='please tell me how to solve the ODE for $u(x)$')
 
 # add return edges
 for node in G.nodes:
