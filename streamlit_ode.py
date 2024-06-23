@@ -68,7 +68,7 @@ So your equation looks like
 $$
 y'(x) = F(x, y).
 $$
-Does the RHS perhaps factorise like this: $F(x, y) = f(x)g(y)$?
+Does the RHS perhaps factorise like this: $F(x, y) = f(x)g(y)$? It might not be immediately obvious, so keep trying to bring it into this form.
 '''
 G.add_node(7, label=can_be_integrated_directly)
 G.add_node(8, label=is_autonomous)
@@ -88,8 +88,56 @@ $$
 \int_{y_0}^{y(x)} d\tilde y\frac{1}{g(\tilde y)} = \int_{x_0}^xd\tilde x f(\tilde x)
 $$
 '''
+is_nonseparable = r'''
+Next try: does $y$ appear only linearly, meaning in the first power and not inside some other function? In other words, can you find functions $p(x)$ and $q(x)$ _of $x$ only_ so that you can write the ODE as
+$$
+y' + p(x) y = q(x)?
+$$
+'''
 G.add_node(10, label=is_separable)
+G.add_node(11, label=is_nonseparable)
 G.add_edge(9, 10, label='yes, it factorises')
+G.add_edge(9, 11, label="I tried long enough, it won't")
+
+is_linear_firstorder = r'''
+This means that we have a _linear_ first-order ODE $y' + p(x) y = q(x)$. There is a general solution formula that applies to all of them, known by the name _integrating factor_. In its full glory it is somewhat intimidating:
+$$
+y = \frac{\int \mu(x) q(x) dx + C}{\mu(x)}
+$$
+with
+$$
+\mu = \exp\int p(x) dx. 
+$$
+If you read off $p(x)$ and $q(x)$ from comparing your ODE to the general form $y' + p(x)y = q(x)$, and plug those two functions into the above formula, you get your general solution $y(x)$ upon cracking all of the integrals.
+
+If that formula above looks scary you, no worries! It's totally possible to solve every linear first-order ODE without ever breaking it out. There is an alternative more benign method which will get you to the solution step by step, and it also memorises easier. Ultimately, it's a matter of personal preference.
+'''
+G.add_node(12, label=is_linear_firstorder)
+G.add_edge(11, 12, label='yes, that works!')
+
+has_inhomogeneity_firstorder = r'''
+We have a first-order ODE with an _inhomogeneity_, meaning a term that depends only on $x$. One example is the most general linear first-order form $y' + p(x)y = q(x)$. Here, the right-hand side term $q(x)$ is the inhomogeneity. 
+
+The method to solve these is a two-step process. First, we solve a related auxiliary ODE, which is _simpler_. The solution will allow us to smartly guess an ansatz for the full ODE, leaving us with another _simpler_ ODE. 
+
+Firstly: rewrite the ODE by dropping the inhomogeneity. This simplifies the equation - in the above example we have $y_h' + p(x) y_h = 0$ left. Since it's a different equation than the one we actually want to solve, we swapped $y(x)$ for $y_h(x)$ - the latter is the solution to our _auxiliary_ ODE. Solve this by whatever means - the above example can be cracked by separation of variables (you can review that method via the button below). Or return to start, if you began with something nonlinear. 
+
+Either way, you should get an expression for the function $y_h(x)$ with one constant of integration, say, $C$. This $y_h(x)$ is sometimes known as the _particular_ or _complementary_ solution.
+
+Secondly, a sleight of hand: we promote $C$ to a function of $x$. Our ansatz for $y$ is just the expression of $y_h$, except that we replace $C$ by $C(x)$. Ultimately that does only takes all our ignorance about the function $y(x)$ and mashes it into $C(x)$. When we plug that ansatz into the _full_ equation (including the inhomogeneity again!), we will receive a first-order ODE for $C(x)$. But, as if by magic, many terms will drop out! In the end the ODE for $C(x)$ will be easier than the original one for $y(x)$ - you can return to start to crack it.
+
+For reasons that are probably obvious, this trick is known as _variation of constants_. It can also be applied to higher-order ODEs - except that there you have as many unknown functions as you have constants of integration in your particular solution, so it's going to be more complicated.
+'''
+has_inhomogeneity_higherorder = r'''
+TBD
+'''
+G.add_node(13, label=has_inhomogeneity_firstorder)
+G.add_node(14, label=has_inhomogeneity_higherorder)
+G.add_edge(12, 13, label='please take me to the alternative method')
+G.add_edge(13, 10, label='please take me to separation of variables')
+G.add_edge(13, 14, label='please tell me more how to apply this to higher-order ODEs')
+G.add_edge(14, 13, label='please let me review variation of constants for first-order ODEs')
+G.add_edge(13, 14)
 # add return edges
 for node in G.nodes:
     if node != 0:
