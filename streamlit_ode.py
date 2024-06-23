@@ -128,16 +128,28 @@ Secondly, a sleight of hand: we promote $C$ to a function of $x$. Our ansatz for
 
 For reasons that are probably obvious, this trick is known as _variation of constants_. It can also be applied to higher-order ODEs - except that there you have as many unknown functions as you have constants of integration in your particular solution, so it's going to be more complicated.
 '''
+is_nonlinear_firstorder = r'''
+Does the $F(x, y)$ in your equation $y' = F(x, y)$ fall apart like this
+$$
+F(x, y) = f(x, y) + q(x),
+$$
+where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ were replaced by $f(x, y)$ instead?
+'''
 has_inhomogeneity_higherorder = r'''
 TBD
 '''
 G.add_node(13, label=has_inhomogeneity_firstorder)
-G.add_node(14, label=has_inhomogeneity_higherorder)
+G.add_node(14, label=is_nonlinear_firstorder)
+G.add_node(20, label=has_inhomogeneity_higherorder)
 G.add_edge(12, 13, label='please take me to the alternative method')
 G.add_edge(13, 10, label='please take me to separation of variables')
-G.add_edge(13, 14, label='please tell me more how to apply this to higher-order ODEs')
-G.add_edge(14, 13, label='please let me review variation of constants for first-order ODEs')
-G.add_edge(13, 14)
+G.add_edge(11, 14, label='nope, we have some nastier function of $y$')
+G.add_edge(14, 13, label='that could work!')
+G.add_edge(13, 20, label='please tell me more how to apply this to higher-order ODEs')
+G.add_edge(20, 13, label='please let me review variation of constants for first-order ODEs')
+
+
+
 # add return edges
 for node in G.nodes:
     if node != 0:
