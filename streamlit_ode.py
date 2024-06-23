@@ -64,7 +64,7 @@ Now all that is left to do is: crack the LHS integral, and manipulate until you 
 You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This strictly constrains the possible shape of $y(x)$, so we found a general and very useful feature of autonomous ODEs: shifting one solution in $x$-direction will again yield a solution.
 '''
 is_nonautonomous = r'''
-So your equation looks like
+Your equation looks like
 $$
 y'(x) = F(x, y).
 $$
@@ -78,7 +78,7 @@ G.add_edge(5, 8, label='$F$ is a function of $y$ only')
 G.add_edge(5, 9, label='$F$ contains both variables')
 
 is_separable = r'''
-Nice! This means that your ODE is _separable_. What this means is that you can accumulate everything $y$-dependent on the LHS, and everything $x$-dependent on the RHS, and integrate:
+Nice! Your ODE is _separable_. What this means is that you can accumulate everything $y$-dependent on the LHS, and everything $x$-dependent on the RHS, and integrate:
 $$
 \frac{dy}{dx} = f(x)g(y) \Rightarrow \int \frac{dy}{g(y)} = \int dx\,f(x) + C,
 $$
@@ -100,7 +100,7 @@ G.add_edge(9, 10, label='yes, it factorises')
 G.add_edge(9, 11, label="I tried long enough, it won't")
 
 is_linear_firstorder = r'''
-This means that we have a _linear_ first-order ODE $y' + p(x) y = q(x)$. There is a general solution formula that applies to all of them, known by the name _integrating factor_. In its full glory it is somewhat intimidating:
+We have a _linear_ first-order ODE $y' + p(x) y = q(x)$. There is a general solution formula that applies to all of them, known by the name _integrating factor_. In its full glory it is somewhat intimidating:
 $$
 y = \frac{\int \mu(x) q(x) dx + C}{\mu(x)}
 $$
