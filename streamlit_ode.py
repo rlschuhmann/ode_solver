@@ -3,18 +3,26 @@ import streamlit as st
 
 # create placeholder flowchart - i.e. a directed graph
 G = nx.DiGraph()
+
 start = r"Let's start with this: does your differential equation contain derivatives with respect to more than variable? For example, you may have both $\frac{\partial}{\partial t}$ and $\frac{\partial}{\partial x}$ in the equation?"
 G.add_node(0, label=start)
 is_ode = "Then it is an ODE! Let's standardise things a little: from now on, the variable with respect to which we derive is always called $x$, and $x$-derivatives will be denoted with a prime $(\ldots)'$. Is there more than one unknown function of $x$ kicking around in your equation?"
 is_pde = "This is not an ODE, but rather a partial differential equation (PDE). These are much more advanced and require completely different techniques."
+
 G.add_node(1, label=is_ode)
 G.add_node(2, label=is_pde)
-
 G.add_edge(0, 1, label='no, just one kind of derivative')
 G.add_edge(0, 2, label='yes, more than one')
 
 is_single_ode = r'''
-Let's standardise further: we have a single unknown function, let's call it $y(x)$. Rearrange your equation such that the highest derivative is isolated on the left hand side. Your equation now looks like 
+Let's standardise further: we have a single unknown function, let's call it $y(x)$. Can you rearrange your equation such that the highest-order derivative of $y$ is isolated on the left hand side?
+'''
+
+G.add_node(17, label=is_single_ode)
+G.add_edge(1, 17, label='just one unknown function')
+
+is_explicit_ode = r'''
+Your equation now looks like 
 $$
 y^{(n)}(x) = \frac{d^n y(x)}{dx^n} = F\left(x, y, y', y'', \ldots, y^{(n-1)}\right)
 $$
@@ -23,11 +31,15 @@ The order of the highest derivative, $n$, is now the _order of your ODE_.
 
 Is $n=1$?
 '''
+is_implicit_ode = "TBD"
+
 is_coupled_ode_system = "Looks like you have a system of coupled ODEs. "
 
-G.add_node(3, label=is_single_ode)
+G.add_node(3, label=is_explicit_ode)
+G.add_node(18, label=is_implicit_ode)
 G.add_node(4, label=is_coupled_ode_system)
-G.add_edge(1, 3, label='just one unknown function')
+G.add_edge(17, 3, label='yes, no problem!')
+G.add_edge(17, 18, label='no, that is impossible')
 G.add_edge(1, 4, label='more than one unknown function')
 
 is_firstorder = r'''
@@ -70,6 +82,7 @@ y'(x) = F(x, y).
 $$
 Does the RHS perhaps factorise like this: $F(x, y) = f(x)g(y)$? It might not be immediately obvious, so keep trying to bring it into this form.
 '''
+
 G.add_node(7, label=can_be_integrated_directly)
 G.add_node(8, label=is_autonomous)
 G.add_node(9, label=is_nonautonomous)
@@ -94,6 +107,7 @@ $$
 y' + p(x) y = q(x)?
 $$
 '''
+
 G.add_node(10, label=is_separable)
 G.add_node(11, label=is_nonseparable)
 G.add_edge(9, 10, label='yes, it factorises')
@@ -112,6 +126,7 @@ If you read off $p(x)$ and $q(x)$ from comparing your ODE to the general form $y
 
 If that formula above looks scary you, no worries! It's totally possible to solve every linear first-order ODE without ever breaking it out. There is an alternative more benign method which will get you to the solution step by step, and it also memorises easier. Ultimately, it's a matter of personal preference.
 '''
+
 G.add_node(12, label=is_linear_firstorder)
 G.add_edge(11, 12, label='yes, that works!')
 
@@ -138,6 +153,7 @@ where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ 
 has_inhomogeneity_higherorder = r'''
 TBD
 '''
+
 G.add_node(13, label=has_inhomogeneity_firstorder)
 G.add_node(14, label=is_nonlinear_firstorder)
 G.add_node(20, label=has_inhomogeneity_higherorder)
@@ -198,7 +214,6 @@ def draw_buttons():
     node_data = get_desc_node_data(current_node)
     #st.text(f'outgoing data: {node_data}')
     if node_data: # may be empty if terminal node
-
         container = st.container()
         for (reply, next_node) in node_data.items():
             #st.text(reply + ' : ' + str(next_node))
@@ -226,4 +241,4 @@ def draw_buttons():
 # streamlit app rendering begins here
 st.header("So you've got this ODE ...", divider='rainbow')
 draw_buttons()
-st.page_link(label="Comments? Drop me an email!", page="https://cosmorobb.science")
+st.page_link(label="Comments? Find me and tell me!", page="https://cosmorobb.science")
