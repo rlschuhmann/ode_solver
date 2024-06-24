@@ -15,7 +15,7 @@ G.add_edge(0, 1, label='no, just one kind of derivative')
 G.add_edge(0, 2, label='yes, more than one')
 
 is_single_ode = r'''
-Let's standardise further: we have a single unknown function, let's call it $y(x)$. Can you rearrange your equation such that the highest-order derivative of $y$ is isolated on the left hand side?
+Let's standardise further: we have a single unknown function, let's call it $y(x)$. Can you rearrange your equation such that the highest-order derivative of $y$ is isolated on the left-hand side?
 '''
 
 G.add_node(17, label=is_single_ode)
@@ -130,12 +130,12 @@ If that formula above looks scary you, no worries! It's totally possible to solv
 G.add_node(12, label=is_linear_firstorder)
 G.add_edge(11, 12, label='yes, that works!')
 
-has_inhomogeneity_firstorder = r'''
+can_be_simplified_voc_firstorder = r'''
 We have a first-order ODE with an _inhomogeneity_, meaning a term that depends only on $x$. One example is the most general linear first-order form $y' + p(x)y = q(x)$. Here, the right-hand side term $q(x)$ is the inhomogeneity. 
 
 The method to solve these is a two-step process. First, we solve a related auxiliary ODE, which is _simpler_. The solution will allow us to smartly guess an ansatz for the full ODE, leaving us with another _simpler_ ODE. 
 
-Firstly: rewrite the ODE by dropping the inhomogeneity. This simplifies the equation - in the above example we have $y_h' + p(x) y_h = 0$ left. Since it's a different equation than the one we actually want to solve, we swapped $y(x)$ for $y_h(x)$ - the latter is the solution to our _auxiliary_ ODE. Solve this by whatever means - the above example can be cracked by separation of variables (you can review that method via the button below). Or return to start, if you began with something nonlinear. 
+Firstly: rewrite the ODE by dropping the inhomogeneity. This simplifies the equation - in the above example we have $y_h' + p(x) y_h = 0$ left. Since it's a different equation than the one we actually want to solve, we swapped $y(x)$ for $y_h(x)$ - the latter is the solution to our _auxiliary_ ODE. Solve this by whatever means - the above example can be cracked by separation of variables (you can review that method via the button below). Or return to start, if you began with something nonlinear - you can find the substitution you need. 
 
 Either way, you should get an expression for the function $y_h(x)$ with one constant of integration, say, $C$. This $y_h(x)$ is sometimes known as the _particular_ or _complementary_ solution.
 
@@ -143,24 +143,14 @@ Secondly, a sleight of hand: we promote $C$ to a function of $x$. Our ansatz for
 
 For reasons that are probably obvious, this trick is known as _variation of constants_. It can also be applied to higher-order ODEs - except that there you have as many unknown functions as you have constants of integration in your particular solution, so it's going to be more complicated.
 '''
-is_nonlinear_firstorder = r'''
-Does the $F(x, y)$ in your equation $y' = F(x, y)$ fall apart like this
-$$
-F(x, y) = f(x, y) + q(x),
-$$
-where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ were replaced by $f(x, y)$ instead?
-'''
 has_inhomogeneity_higherorder = r'''
 TBD
 '''
 
-G.add_node(13, label=has_inhomogeneity_firstorder)
-G.add_node(14, label=is_nonlinear_firstorder)
+G.add_node(13, label=can_be_simplified_voc_firstorder)
 G.add_node(20, label=has_inhomogeneity_higherorder)
 G.add_edge(12, 13, label='please take me to the alternative method')
 G.add_edge(13, 10, label='please take me to separation of variables')
-G.add_edge(11, 14, label='nope, we have some nastier function of $y$')
-G.add_edge(14, 13, label='that could work!')
 G.add_edge(13, 20, label='please tell me more how to apply this to higher-order ODEs')
 G.add_edge(20, 13, label='please let me review variation of constants for first-order ODEs')
 
@@ -182,9 +172,149 @@ In your original ODE, replace all $y$, $y'$ by $u$, $u'$ and after some algebra 
 
 G.add_node(15, label=is_nonlinear_firstorder)
 G.add_node(16, label=is_bernoulli)
-G.add_edge(14, 15, label='that will not help')
+
+G.add_edge(11, 15, label='nope, we have some nastier function of $y$')
 G.add_edge(15, 16, label='yes it does!')
 G.add_edge(16, 12, label='please tell me how to solve the ODE for $u(x)$')
+
+is_not_bernoulli = r'''
+Is the right-hand side your ODE of the form 
+$$
+y' = f(ax+by+c)
+$$
+for some real numbers $a, b, c$ and some nonlinear function $f$?
+'''
+
+G.add_node(19, label=is_not_bernoulli)
+G.add_edge(15, 19, label='no, I have some other nonlinearity')
+
+is_ax_by_c = r'''
+If your equation has the shape $y' = f(ax+by+c)$ for real numbers $a, b, c$ and some given function $f$, you can crack it this way: define a new function $z(x) = ax+by(x)+c$ and substitute into the existing ODE. The result is this:
+$$
+z = ax + by + c \Rightarrow z' = \frac{dz}{dx} = a + by' = a + b f(z)
+$$
+The resulting ODE $z' = a + b f(z)$ is now easy to solve - it is an autonomous equation!
+'''
+
+G.add_node(21, label=is_ax_by_c)
+G.add_edge(19, 21, label='yes it is!')
+G.add_edge(21, 8, label='please tell me how to solve the ODE for $z$')
+
+is_not_ax_by_c = r'''
+Is your equation of the shape
+$$
+y' = f\left(\frac{y}{x}\right)?
+$$
+It may not be immediately obvious - as in this example:
+$$
+y' = \frac{y-x}{y+x} = \frac{\frac{y}{x}-1}{\frac{y}{x}+1}
+$$
+'''
+
+is_homogeneous = r'''
+An equation of the type
+$$
+y' = f\left(\frac{y}{x}\right)
+$$
+is known as _homogeneous_. Confusingly so, because any ODE without an inhomogeneity (a term in $F(x, y)$ containing only $x$) is _also_ called homogeneous! Always make sure which sense of homogeneity applies.
+
+The substitution we need to crack this is $u(x) = y(x)/x$. This means that $y = xu$ and $y' = u + xu'$, so
+$$
+y' = u + xu' = f(u)\Rightarrow u' = \frac{f(u)-u}{x}
+$$
+which is separable:
+$$
+\int\frac{du}{f(u)-u} = \int\frac{dx}{x} = \ln(x)+C
+$$
+'''
+
+G.add_node(23, label=is_not_ax_by_c)
+G.add_node(24, label=is_homogeneous)
+G.add_edge(19, 23, label='my $F(x, y)$ looks different')
+G.add_edge(23, 24, label='yes, that applies')
+
+is_not_homogeneous = r'''
+Does your ODE have the shape
+$$
+y' = f\left(\frac{ax+by+c}{r x+s y+t}\right)
+$$
+with $a, b, c, r, s, t$ some real numbers? If yes, is $a s =r b$?
+'''
+
+is_shiftable_nonzero_det = r'''
+If $as \neq rb$, then you can solve the linear system
+$$
+\left\{\begin{align*}
+a\xi + b\eta + c = 0\\
+r\xi + s\eta + t = 0
+\end{align*}\right.
+$$
+by whichever linear algebra technique you are most familiar with - there will always be one unique pair of numbers $(\xi, \eta)$. Substitute $u = x - \xi$ and $v = y-\eta$. We plan to replace $y(x)$ by $v(u)$ in the ODE - with some algebra you will find two equations:
+$$
+\frac{dv}{du} = \frac{dy}{dx}\qquad;\qquad\frac{ax+by+c}{r x+s y+t} = \frac{au+bv}{ru+sv} = \frac{a + b\frac{v}{u}}{r + s\frac{v}{u}}.
+$$
+This means that we have reduced our ODE to one of the homogeneous type
+$$
+\frac{dv}{du} = g\left(\frac{v}{u}\right)
+$$
+which we have dealt with before. Specifically, $g(z) = f\left(\frac{a+bz}{r+sz}\right)$.
+'''
+
+is_shiftable_zero_det = r'''
+We can reduce the equation $y' = f\left(\frac{ax+by+c}{r x+s y+t}\right)$ to a system we have handled before. If $as = rb$, then we can define $\mu = \frac{a}{r} = \frac{b}{s}$, and
+$$
+\frac{ax+by+c}{rx+sy+t} = \frac{\mu rx+\mu sy + \mu t - \mu t+c}{rx+sy+t} = \mu + \frac{c-\mu t}{rx+sy+t}.
+$$
+This means that $f\left(\frac{ax+by+c}{r x+s y+t}\right)$ has the shape $g(rx+sy+t)$, which we have dealt with before. In particular, take 
+$$
+g(z) = f\left(\mu + \frac{c-\mu t}{z}\right).
+'''
+
+last_sub = 26
+G.add_node(26, label=is_not_homogeneous)
+G.add_node(27, label=is_shiftable_nonzero_det)
+G.add_node(28, label=is_shiftable_zero_det)
+G.add_edge(23, 26, label='my $F$ looks different still')
+G.add_edge(26, 27, label='yes that works, and $a s ≠ r b$')
+G.add_edge(26, 28, label='yes that works, and $a s = r b$')
+G.add_edge(28, 21, label='how do I solve the simplifed $g$ equation, again?')
+G.add_edge(27, 24, label='how do I solve the simplified $g$ equation again?')
+
+has_no_substitutions_firstorder = r'''
+We have gone through a bunch of possible shapes for $F(x, y)$ and the corresponding substitutions that simplify the ODE. 
+
+If any of the substitutions we just went through was close to your RHS, perhaps fitting except for one term, it is still worth plugging it in. Even if it does not outright crack the equation, you may end up with an equation that's easier to solve. Often enough, solving ODEs is a task where you slowly whittle away through a chain of substitutions until you get an equation simple enough to crack directly.
+'''
+
+needs_voc = r'''
+If your equation falls into none of the categories and no substitution gets you anywhere, perhaps we can simplify it and reduce it to one where some may.
+
+Does the $F(x, y)$ in your equation $y' = F(x, y)$ fall apart like this
+$$
+F(x, y) = f(x, y) + q(x),
+$$
+where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ were replaced by $f(x, y)$ instead? For example, we could have $f(x, y)$ of any of these possible shapes
+* $f(x, y) = g(x)h(y)$
+* $f(x, y) = p(x)y + q(x)y^\nu$ with real $\nu\neq 0, 1$
+* $f(x, y) = g(ax+by+c)$
+* $f(x, y) = g(y/x)$
+* $f(x, y) = g\left(\frac{ax+by+c}{\alpha x+\beta y + \gamma}\right)$
+* $f(x, y) = a x^\alpha + cy^2$
+'''
+
+needs_exact_or_graphical = '''
+TBD
+'''
+
+G.add_node(25, label=has_no_substitutions_firstorder)
+G.add_node(14, label=needs_voc)
+G.add_node(22, label=needs_exact_or_graphical)
+G.add_edge(last_sub, 25, label='not helpful')
+G.add_edge(25, 15, label='can I see the substitutions again?')
+G.add_edge(25, 14, label='no progress')
+G.add_edge(14, 13, label='that could work!')
+G.add_edge(14, 22, label='that will not help')
+
 
 # add return edges
 for node in G.nodes:
