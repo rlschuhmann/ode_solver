@@ -459,7 +459,7 @@ $$
 M(x, y)\\N(x, y)
 \end{align*}\right] = \nabla \Phi(x, y).
 $$
-In that case the integrability condition works out because the second derivatives of the potential commute: $\partial_y\partial_x\Phi = \partial_x\partial_y\Phi$. There is a neat bit of differential geometry that shows that this works the other way round too: if the integrability condition is satisfied, then you can always find such a potential $\Phi$ via the ansatz
+In that case the integrability condition works out automatically because the second derivatives of the potential commute: $\partial_y\partial_x\Phi = \partial_x\partial_y\Phi$. There is a neat bit of differential geometry that shows that this works the other way round too: if the integrability condition is satisfied, then you can always find such a potential $\Phi$ via the ansatz
 $$
 \Phi(x, y) = \int M(x, y) dx + \chi(y)
 $$
@@ -491,9 +491,9 @@ which in general is way too horrendously complicated to solve by analytical mean
 
 cant_be_made_exact_with_integrating_factor = r'''
 If you made it to here, we need to contemplate the idea that there may not be an exact analytic solution to your problem. This is far from giving up - we just need to look to other, more qualitative techniques of what it means to solve your system. Three important alternative viewpoints are 
-1) graphical methods,
-2) perturbative methods,
-3) numerical methods.
+1) graphical methods: great for intuition building
+2) perturbative methods: find and refine approximate solutions
+3) numerical methods: put your ODE in a computer
 '''
 
 G.add_node(37, label=is_exact)
