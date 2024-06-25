@@ -191,6 +191,18 @@ G.add_edge(15, 16, label='yes it does!')
 G.add_edge(16, 12, label='please tell me how to solve the ODE for $u(x)$')
 
 is_not_bernoulli = r'''
+Is the right-hand side of your ODE some monomial in $x$ and $y$?
+'''
+
+is_monomial = r'''
+If your nonlinear $F(x, y)$ has a monomial shape, try the substitution
+$$
+y(x) = x^r [u(x)]^s
+$$
+with unknown real numbers $r, s$. Insert into the ODE and try to choose $r$ and $s$ such that as many terms as possible drop out, and make the ODE for $u(x)$ as simple as possible. 
+'''
+
+is_not_monomial = r'''
 Is the right-hand side your ODE of the form 
 $$
 y' = f(ax+by+c)
@@ -199,7 +211,12 @@ for some real numbers $a, b, c$ and some nonlinear function $f$?
 '''
 
 G.add_node(19, label=is_not_bernoulli)
+G.add_node(40, label=is_monomial)
+G.add_node(41, label=is_not_monomial)
 G.add_edge(15, 19, label='no, I have some other nonlinearity')
+G.add_edge(19, 40, label='yes it is')
+G.add_edge(40, 41, label='nothing useful fell out')
+G.add_edge(19, 41, label='it is not')
 
 is_ax_by_c = r'''
 If your equation has the shape $y' = f(ax+by+c)$ for real numbers $a, b, c$ and some given function $f$, you can crack it this way: define a new function $z(x) = ax+by(x)+c$ and substitute into the existing ODE. The result is this:
@@ -210,7 +227,7 @@ The resulting ODE $z' = a + b f(z)$ is now easy to solve - it is an autonomous e
 '''
 
 G.add_node(21, label=is_ax_by_c)
-G.add_edge(19, 21, label='yes it is!')
+G.add_edge(41, 21, label='yes it is!')
 G.add_edge(21, 8, label='please tell me how to solve the ODE for $z$')
 
 is_not_ax_by_c = r'''
@@ -243,7 +260,7 @@ $$
 
 G.add_node(23, label=is_not_ax_by_c)
 G.add_node(24, label=is_homogeneous)
-G.add_edge(19, 23, label='my $F(x, y)$ looks different')
+G.add_edge(41, 23, label='my $F(x, y)$ looks different')
 G.add_edge(23, 24, label='yes, that applies')
 
 is_not_homogeneous = r'''
