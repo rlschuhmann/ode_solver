@@ -155,6 +155,16 @@ G.add_edge(13, 20, label='please tell me more how to apply this to higher-order 
 G.add_edge(20, 13, label='please let me review variation of constants for first-order ODEs')
 
 is_nonlinear_firstorder = r'''
+Before we jump into possible substitutions, let's check if there is an obvious candidate ansatz. Plug in the following test functions and see if you can crack whatever equation falls out:
+* power law: $y(x) = x^\alpha$ for some unknown real number $\alpha$
+* exponential: $y(x) = \exp [\lambda x]$ for some unknown real or complex $\lambda$
+* trig functions: $y(x) = \sin(x), \cos(x), \tan(x)$
+* be creative!
+
+It's often a good idea to take an inspiration from the terms already kicking around in your equation: the best way to cancel an expression containing an $\exp$ is with another $\exp$. Also, it may well be that a well-chosen ansatz does not outright solve the equation, but simplifies it: for example, if your ansatz makes all terms cancel except purely $x$-dependent ones, have a look at _variation of constants_.
+'''
+
+has_no_obvious_ansatz = r'''
 Let's check if your equation is of the _Bernoulli_ type: does $y$ appear as a power $\nu$, such that you can bring the equation into the form
 $$
 y' + P(x) y = Q(x)y^\nu?
@@ -170,10 +180,13 @@ $$
 In your original ODE, replace all $y$, $y'$ by $u$, $u'$ and after some algebra you will have a _linear_ first-order ODE for $u(x)$ which you can solve by conventional means. Then take that to the power $\frac{1}{1-\nu}$ to get $y$.
 '''
 
-G.add_node(15, label=is_nonlinear_firstorder)
+G.add_node(29, label=is_nonlinear_firstorder)
+G.add_node(15, label=has_no_obvious_ansatz)
 G.add_node(16, label=is_bernoulli)
 
-G.add_edge(11, 15, label='nope, we have some nastier function of $y$')
+G.add_edge(29, 13, label='please explain variation of constants')
+G.add_edge(29, 15, label='nothing has worked')
+G.add_edge(11, 29, label='nope, we have some nastier function of $y$')
 G.add_edge(15, 16, label='yes it does!')
 G.add_edge(16, 12, label='please tell me how to solve the ODE for $u(x)$')
 
@@ -270,7 +283,7 @@ $$
 g(z) = f\left(\mu + \frac{c-\mu t}{z}\right).
 '''
 
-last_sub = 26
+
 G.add_node(26, label=is_not_homogeneous)
 G.add_node(27, label=is_shiftable_nonzero_det)
 G.add_node(28, label=is_shiftable_zero_det)
@@ -280,6 +293,104 @@ G.add_edge(26, 28, label='yes that works, and $a s = r b$')
 G.add_edge(28, 21, label='how do I solve the simplifed $g$ equation, again?')
 G.add_edge(27, 24, label='how do I solve the simplified $g$ equation again?')
 
+is_not_shiftable = r'''
+Does your equation have the shape
+$$
+y' = p(x) + q(x)y + r(x)y^2
+$$
+with $p, q, r$ three functions of $x$ only?
+'''
+
+is_riccati = r'''
+Any equation $y' = p(x) + q(x)y + r(x)y^2$ is of _general Riccati_ type. It is a generalisation of the Bernoulli type with exponent $\nu=2$ (set $p\equiv 0$). It is a nonlinear first-order equation, so there may be more than one family of solutions - as opposed to linear first-order equations, where there is always one family (particular solution + integration constant * homogeneous solution). Indeed this is the case here.
+
+There are two things you can try. First, a strategy to find the general solution from a guess for a particular solution. To do this, assume that by skillful staring and/or sheer guessing luck you have found one solution $y_1(x)$. Now substitute the following ansatz for the general solution into the equation:
+$$
+y(x) = y_1(x) + \frac{1}{z(x)}
+$$
+with a new unknown function $z(x)$. After a benign amount of algebra you reach the following ODE in $z$:
+$$
+z' = -[2r(x)y_1(x) + q(x)] z - r(x),
+$$
+which is a first-order linear inhomogeneous equation which you can solve by standard methods. The solutions for your Riccati-type equation are $y_1$ and $y_1 + z^{-1}$.
+
+The second trick does not assume you to guess, but rather shows a way to reduce your first-order Riccati equation to a second order linear homogeneous equation. This is how to do it: assume that there is a function $u(x)$ satisfying $u'/u = - r y$. Then, after some algebra you find that it reduces the Riccati equation to the following ODE
+$$
+u'' = \left[q(x)+\frac{r'(x)}{r(x)}\right]u' - p(x)r(x)
+$$
+which is second-order, linear and homogeneous. Find a solution, and then find $y = -u'/(ru)$.
+
+'''
+is_second_order_linear_homogeneous = r'''
+TBD
+'''
+
+G.add_node(30, label=is_not_shiftable)
+G.add_node(31, label=is_riccati)
+G.add_node(33, label=is_second_order_linear_homogeneous)
+
+G.add_edge(26, 30, label='neither that one')
+G.add_edge(30, 31, label='that matches!')
+G.add_edge(30, 32, label='again, no match')
+G.add_edge(31, 32, label='none of that helped')
+G.add_edge(31, 12, label='how do I solve linear first-order inhomogeneous again?')
+G.add_edge(31, 33, label='and how do I solve linear second-order homogeneous?')
+
+is_not_general_riccati = r'''
+Does your equation have the shape
+$$
+y' = a x^\alpha + b y^2,
+$$
+where $a, b\in\mathbb{R}$ and the negative exponent $\alpha$ equals 
+* either $\alpha = -2$,  
+* or a negative number of shape $\alpha = -\frac{4m}{2m-1}$ with an integer $m\in\mathbb{N}$ (so $\alpha = -4, -8/3, -12/5, -16/7, \ldots$), 
+* or a negative number of shape $\alpha = -\frac{4m}{2m+1}$ with an integer $m\in\mathbb{N}$ (so $\alpha = -4/3, -8/5, -12/7, -16/9, \ldots$).
+'''
+
+is_special_riccati_2 = r'''
+Your equation is 
+$$
+y' = \frac{a}{x^2}+ b y^2
+$$
+with real numbers $a, b$. Substitute in a new function $u(x) = 1/y(x)$, so $y' = -u'/u^2$. You get an ODE for $u$ of the shape
+$$
+u' = -a\left(\frac{u}{x}\right)^2-b
+$$
+which is of the "homogeneous" type $y' = f(y/x)$.
+'''
+is_special_riccati_mminus = r'''
+Your equation has the shape $y' = a x^\alpha + b y^2$ with real numbers $a, b$, and where the exponent of $x$ has the shape $\alpha = -\frac{4m}{2m-1}$.
+This is going to be a cascading chain of substitutions, so strap in:
+
+1) First substitute $z = x^2 y + \frac{x}{b}$. This yields 
+$$
+z' = a x^{\alpha+2}+ \frac{b}{x^2} z^2.
+$$
+2) Next substitute _both_ the function and the variable: 
+$$
+u = x^{\alpha+3}\rightarrow x = u^{1/(\alpha+3)}\qquad;\qquad v(u) = \frac{1}{z(x)}.
+$$
+Now,
+$$
+\frac{dv}{du} = \frac{dv}{dz}\frac{dz}{dx}\frac{dx}{du} = \left(-v^2\right)\left(a x^{\alpha+2}+\frac{b z^2}{x^2}\right)\left(\frac{u^{-\frac{\alpha+2}{\alpha+3}}}{\alpha+3}\right)=-\frac{b}{\alpha+3}u^{-\frac{\alpha+4}{\alpha+3}}-\frac{a}{\alpha+3}v^2.
+$$
+3. Given that $\alpha=-\frac{4m}{2m-1}$, we get $\frac{\alpha+4}{\alpha+3} = \frac{4(m-1)}{2(m-1)-1}$. This means that we have reduced our original equation to one of the same shape, but modified coefficients and also $m\rightarrow m-1$. This means that you can go repeat steps 1 and 2, each time knocking down $m$ by $1$, until you reach $m=0$.
+4. The leftover equation is separable. Solve it, and then unravel the daisy chain of substitutions.
+'''
+is_special_riccati_mplus = r'''
+TBD'''
+
+G.add_node(32, label=is_not_general_riccati)
+G.add_node(34, label=is_special_riccati_2)
+G.add_node(35, label=is_special_riccati_mminus)
+G.add_node(36, label=is_special_riccati_mplus)
+
+G.add_edge(32, 34, label='looks good, tell me more! My exponent is $-2$')
+G.add_edge(32, 35, label='looks good, tell me more! My exponent is $-4m/(2m-1)$ for some $m\in\mathbb{N}$')
+G.add_edge(32, 36, label='looks good, tell me more! My exponent is $-4m/(2m+1)$ for some $m\in\mathbb{N}$')
+G.add_edge(34, 24, label="how do I solve $y' = f(y/x)$ again?")
+
+last_sub = 32
 has_no_substitutions_firstorder = r'''
 We have gone through a bunch of possible shapes for $F(x, y)$ and the corresponding substitutions that simplify the ODE. 
 
