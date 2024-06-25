@@ -390,7 +390,7 @@ G.add_edge(32, 35, label='looks good, tell me more! My exponent is $-4m/(2m-1)$ 
 G.add_edge(32, 36, label='looks good, tell me more! My exponent is $-4m/(2m+1)$ for some $m\in\mathbb{N}$')
 G.add_edge(34, 24, label="how do I solve $y' = f(y/x)$ again?")
 
-last_sub = 32
+
 has_no_substitutions_firstorder = r'''
 We have gone through a bunch of possible shapes for $F(x, y)$ and the corresponding substitutions that simplify the ODE. 
 
@@ -413,19 +413,79 @@ where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ 
 * $f(x, y) = a x^\alpha + cy^2$
 '''
 
-needs_exact_or_graphical = '''
-TBD
+has_no_substitutions_even_dropping_inhomogeneity_firstorder = r'''
+Let us try something different: rearrange the ODE in the shape
+$$
+M(x, y) dx + N(x, y) dy = 0.
+$$
+You have a lot of freedom in choosing the functions $M$, $N$ because at this point the only constraint is that $F(x, y) = - M(x, y)/N(x, y)$. We want to use this freedom to arrange
+$$
+\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}.
+$$
+This is known as the _integrability condition_. Muster your creativity and try to find $M$, $N$ that fit this.
 '''
+
 
 G.add_node(25, label=has_no_substitutions_firstorder)
 G.add_node(14, label=needs_voc)
-G.add_node(22, label=needs_exact_or_graphical)
-G.add_edge(last_sub, 25, label='not helpful')
+G.add_node(22, label=has_no_substitutions_even_dropping_inhomogeneity_firstorder)
+G.add_edge(32, 25, label='not helpful')
 G.add_edge(25, 15, label='can I see the substitutions again?')
 G.add_edge(25, 14, label='no progress')
 G.add_edge(14, 13, label='that could work!')
 G.add_edge(14, 22, label='that will not help')
 
+is_exact = r'''
+You have found two functions $M$, $N$ such that your ODE looks like $M dx + N dy = 0$ and $\partial_y M = \partial_x N$ - this is the _integrability condition_, and an ODE that allows for this is called _exact_. One way to create such functions is if they are the gradient of some potential function:
+$$
+\left[\begin{align*}
+M(x, y)\\N(x, y)
+\end{align*}\right] = \nabla \Phi(x, y).
+$$
+In that case the integrability condition works out because the second derivatives of the potential commute: $\partial_y\partial_x\Phi = \partial_x\partial_y\Phi$. There is a neat bit of differential geometry that shows that this works the other way round too: if the integrability condition is satisfied, then you can always find such a potential $\Phi$ via the ansatz
+$$
+\Phi(x, y) = \int M(x, y) dx + \chi(y)
+$$
+which automatically satisfies $M = \partial_x\Phi$. To ensure that $N =\partial_y\Phi$, you need to solve the ODE for the rest term $\chi$:
+$$
+\partial_y\chi(y) = N(x, y) - \int\partial_y M(x, y) dx,
+$$
+which is first-order and benign. Now insert $\Phi$ into the ODE, keeping in mind we want to solve for a function $y(x)$, a curve in the plane: 
+$$
+0 = \partial_x\Phi(x, y) dx + \partial_y\Phi(x, y)\frac{dy}{dx}dx = \partial_x\Phi(x, y(x)) dx.
+$$
+If we keep along a constant-potential curve, we get to fulfill our ODE! So if you have an explicit expression for your potential, you can find the ODE solutions $y(x)$ via the implicit equation
+$$
+\Phi(x, y(x)) = C.
+$$
+'''
+
+is_not_exact = r'''
+You have written your ODE as $M(x, y)dx + N(x, y)dy = 0$. There is one more trick worth trying to find $M$, $N$ that satisfy the integrability condition $\partial_y M = \partial_x N$, namely with a generalisation of the _integrating factor_ method. Here we use it to systematically explore the space of functions $M$, $N$ obeying $M/N=-F$. 
+
+If $M dx + N dy = 0$, then so will $(\mu M) dx + (\mu N) dy=0$ for any function $\mu = \mu(x, y)$. If $\partial_y M \neq \partial_x N$, what condition on $\mu$ would allow us to arrange $\partial_y (\mu M) = \partial_x (\mu N)$? Then we can just use $\mu M$ and $\mu N$ as the coefficient functions of our now-exact equation.
+
+The answer is that $\mu(x, y)$ must obey the _partial differential equation_
+$$
+M\partial_y\mu - N\partial_x\mu + \left(\partial_yM - \partial_x N\right)\mu = 0
+$$
+which in general is way too horrendously complicated to solve by analytical means. However - if you are at this point, just write down the corresponding PDE, perhaps there are simplifications and cancellations in your particular case. For example, if $(\partial_y M - \partial_x N)/N$ has all $y$'s drop out, then you may assume that $\mu = \mu(x)$, and the PDE reduces to an ODE which can be cracked with a simple separation of variables.
+'''
+
+cant_be_made_exact_with_integrating_factor = r'''
+If you made it to here, we need to contemplate the idea that there may not be an exact analytic solution to your problem. This is far from giving up - we just need to look to other, more qualitative techniques of what it means to solve your system. Three important alternative viewpoints are 
+1) graphical methods,
+2) perturbative methods,
+3) numerical methods.
+'''
+
+G.add_node(37, label=is_exact)
+G.add_node(38, label=is_not_exact)
+G.add_node(39, label=cant_be_made_exact_with_integrating_factor)
+G.add_edge(22, 37, label='I found some! What now?')
+G.add_edge(38, 37, label='I made it exact with an integrating factor! What now?')
+G.add_edge(22, 38, label='I tried everything')
+G.add_edge(38, 39, label='nope, nothing works')
 
 # add return edges
 for node in G.nodes:
