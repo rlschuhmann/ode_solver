@@ -448,7 +448,6 @@ where $q(x)$ does not depend on $y$, and the ODE were much simpler if $F(x, y)$ 
 * $f(x, y) = g(ax+by+c)$
 * $f(x, y) = g(y/x)$
 * $f(x, y) = g\left(\frac{ax+by+c}{\alpha x+\beta y + \gamma}\right)$
-* $f(x, y) = a x^\alpha + cy^2$
 '''
 
 has_no_substitutions_even_dropping_inhomogeneity_firstorder = r'''
