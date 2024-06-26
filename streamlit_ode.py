@@ -215,7 +215,7 @@ G.add_node(40, label=is_monomial)
 G.add_node(41, label=is_not_monomial)
 G.add_edge(15, 19, label='no, I have some other nonlinearity')
 G.add_edge(19, 40, label='yes it is')
-G.add_edge(40, 41, label='nothing useful fell out')
+G.add_edge(40, 41, label='nothing useful came of it')
 G.add_edge(19, 41, label='it is not')
 
 is_ax_by_c = r'''
@@ -523,6 +523,25 @@ G.add_edge(22, 37, label='I found some! What now?')
 G.add_edge(38, 37, label='I made it exact with an integrating factor! What now?')
 G.add_edge(22, 38, label='I tried everything')
 G.add_edge(38, 39, label='nope, nothing works')
+
+needs_graphical = r'''
+TBD
+'''
+
+needs_perturbative = r'''
+TBD
+'''
+
+needs_numerical = r'''
+TBD
+'''
+
+G.add_node(40, label=needs_graphical)
+G.add_node(41, label=needs_perturbative)
+G.add_node(42, label=needs_numerical)
+G.add_edge(39, 40, label='please tell me more about graphical methods')
+G.add_edge(39, 41, label='please tell me more about perturbative methods')
+G.add_edge(39, 42, label='please tell me more about numerical methods')
 
 # add return edges
 for node in G.nodes:
