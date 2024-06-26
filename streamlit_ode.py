@@ -536,12 +536,12 @@ needs_numerical = r'''
 TBD
 '''
 
-G.add_node(40, label=needs_graphical)
-G.add_node(41, label=needs_perturbative)
-G.add_node(42, label=needs_numerical)
-G.add_edge(39, 40, label='please tell me more about graphical methods')
-G.add_edge(39, 41, label='please tell me more about perturbative methods')
-G.add_edge(39, 42, label='please tell me more about numerical methods')
+G.add_node(42, label=needs_graphical)
+G.add_node(43, label=needs_perturbative)
+G.add_node(44, label=needs_numerical)
+G.add_edge(39, 42, label='please tell me more about graphical methods')
+G.add_edge(39, 43, label='please tell me more about perturbative methods')
+G.add_edge(39, 44, label='please tell me more about numerical methods')
 
 # add return edges
 for node in G.nodes:
@@ -565,8 +565,8 @@ if "node_history" not in st.session_state:
 # this renders the label of the current node, and a button for every outgoing edge
 @st.experimental_fragment
 def draw_buttons():
-    current_node = st.session_state.current_node
-    #st.text(f'current node number: {current_node}')
+    #current_node = st.session_state.current_node
+    st.text(f'current node number: {current_node}')
     st.markdown(G.nodes[current_node]['label'])
     node_data = get_desc_node_data(current_node)
     #st.text(f'outgoing data: {node_data}')
