@@ -199,7 +199,7 @@ If your nonlinear $F(x, y)$ has a monomial shape, try the substitution
 $$
 y(x) = x^r [u(x)]^s
 $$
-with unknown real numbers $r, s$. Insert into the ODE and try to choose $r$ and $s$ such that as many terms as possible drop out, and make the ODE for $u(x)$ as simple as possible. 
+with unknown real numbers $r, s$. Insert into the ODE and try to choose $r$ and $s$ such that as many terms as possible drop out, and make the ODE for $u(x)$ as simple as possible - ideally linear! 
 '''
 
 is_not_monomial = r'''
@@ -391,11 +391,28 @@ Now,
 $$
 \frac{dv}{du} = \frac{dv}{dz}\frac{dz}{dx}\frac{dx}{du} = \left(-v^2\right)\left(a x^{\alpha+2}+\frac{b z^2}{x^2}\right)\left(\frac{u^{-\frac{\alpha+2}{\alpha+3}}}{\alpha+3}\right)=-\frac{b}{\alpha+3}u^{-\frac{\alpha+4}{\alpha+3}}-\frac{a}{\alpha+3}v^2.
 $$
-3. Given that $\alpha=-\frac{4m}{2m-1}$, we get $\frac{\alpha+4}{\alpha+3} = \frac{4(m-1)}{2(m-1)-1}$. This means that we have reduced our original equation to one of the same shape, but modified coefficients and also $m\rightarrow m-1$. This means that you can go repeat steps 1 and 2, each time knocking down $m$ by $1$, until you reach $m=0$.
+3. Given that $\alpha=-\frac{4m}{2m-1}$, we get $-\frac{\alpha+4}{\alpha+3} = -\frac{4(m-1)}{2(m-1)-1}$. This means that we have reduced our original equation to one of the same shape, but with modified coefficients and also $m\rightarrow m-1$. Therefore you can go repeat steps 1 and 2, each time knocking down $m$ by $1$, until you reach $m=0$.
 4. The leftover equation is separable. Solve it, and then unravel the daisy chain of substitutions.
 '''
 is_special_riccati_mplus = r'''
-TBD'''
+Your equation has the shape $y' = a x^\alpha + b y^2$ with real numbers $a, b$, and where the exponent of $x$ has the shape $\alpha = -\frac{4m}{2m+1}$.
+This is going to be a cascading chain of substitutions, so strap in:
+
+1. First substitute _both_ the function and the variable: 
+$$
+u = x^{-(\alpha+1)}\rightarrow x = u^{-1/(\alpha+1)}\qquad;\qquad z(u) = \frac{1}{y(x)}.
+$$
+Now,
+$$
+\frac{dz}{du} = \frac{dz}{dy}\frac{dy}{dx}\frac{dx}{du} = \left(-z^2\right)\left(a u^{-\frac{\alpha}{\alpha+1}}+\frac{b}{z^2}\right)\left(-\frac{u^{-\frac{\alpha+2}{\alpha+1}}}{\alpha+1}\right)=\frac{a}{\alpha+1}\frac{z^2}{u^2} + \frac{b}{\alpha+1}u^{-\frac{\alpha+2}{\alpha+1}}.
+$$
+2. Now, substitute $v(u) = \frac{z(u)}{u^2}$. This yields
+$$
+\frac{dv}{du} = \frac{dv}{dz}\frac{dz}{du} = \frac{1}{u^2}\left(\frac{a}{\alpha+1}\frac{v^2u^4}{u^2} + \frac{b}{\alpha+1}u^{-\frac{\alpha+2}{\alpha+1}} \right) = \frac{a}{\alpha+1} v^2 + \frac{b}{\alpha+1}u^{-\frac{3\alpha+4}{\alpha+1}}.
+$$
+3. Given that $\alpha=-\frac{4m}{2m+1}$, we get $-\frac{3\alpha+4}{\alpha+1} = -\frac{4(m-1)}{2(m-1)+1}$. This means that we have reduced our original equation to one of the same shape, but with modified coefficients and also $m\rightarrow m-1$. Therefore you can go repeat steps 1 and 2, each time knocking down $m$ by $1$, until you reach $m=0$.
+4. The leftover equation is separable. Solve it, and then unravel the daisy chain of substitutions.
+'''
 
 G.add_node(32, label=is_not_general_riccati)
 G.add_node(34, label=is_special_riccati_2)
@@ -473,7 +490,7 @@ $$
 $$
 which is first-order and benign. Now insert $\Phi$ into the ODE, keeping in mind we want to solve for a function $y(x)$, a curve in the plane: 
 $$
-0 = \partial_x\Phi(x, y) dx + \partial_y\Phi(x, y)\frac{dy}{dx}dx = \partial_x\Phi(x, y(x)) dx.
+0 = \partial_x\Phi(x, y) dx + \partial_y\Phi(x, y)\frac{dy}{dx}dx = \frac{d}{dx}\Phi(x, y(x)) dx.
 $$
 If we keep along a constant-potential curve, we get to fulfill our ODE! So if you have an explicit expression for your potential, you can find the ODE solutions $y(x)$ via the implicit equation
 $$
