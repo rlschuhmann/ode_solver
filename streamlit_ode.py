@@ -565,7 +565,7 @@ if "node_history" not in st.session_state:
     st.session_state.node_history = [st.session_state.current_node]
 
 # this renders the label of the current node, and a button for every outgoing edge
-@st.experimental_fragment
+@st.fragment
 def draw_buttons():
     current_node = st.session_state.current_node
     #st.text(f'current node number: {current_node}')
