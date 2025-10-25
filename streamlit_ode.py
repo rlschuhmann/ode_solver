@@ -42,6 +42,8 @@ G.add_edge(17, 3, label='yes, no problem!')
 G.add_edge(17, 18, label='no, that is impossible')
 G.add_edge(1, 4, label='more than one unknown function')
 
+nx.nx_agraph.write_dot(G, 'graph.dot')
+
 is_firstorder = r'''
 So we have a single first-order ODE. Does the right-hand side $F$ depend on $x$ or $y$ at all?
 '''
@@ -73,7 +75,7 @@ $$
 $$
 Now all that is left to do is: crack the LHS integral, and manipulate until you manage to isolate $y(x)$.
 
-You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This strictly constrains the possible shape of $y(x)$, so we found a general and very useful feature of autonomous ODEs: shifting one solution in $x$-direction will again yield a solution.
+You will notice that $y(x)$ depends only on the distance to the starting point $x-x_0$. This strictly constrains the possible ways how $y(x)$ depends on the initial value - we found a general and very useful feature of autonomous ODEs: shifting one solution in $x$-direction will again yield a solution.
 '''
 is_nonautonomous = r'''
 Your equation looks like
@@ -485,7 +487,7 @@ $$
 $$
 which automatically satisfies $M = \partial_x\Phi$. To ensure that $N =\partial_y\Phi$, you need to solve the ODE for the rest term $\chi$:
 $$
-\partial_y\chi(y) = N(x, y) - \int\partial_y M(x, y) dx,
+\partial_y\chi(y) = N(x, y) - \partial_y \int M(x, y) dx,
 $$
 which is first-order and benign. Now insert $\Phi$ into the ODE, keeping in mind we want to solve for a function $y(x)$, a curve in the plane: 
 $$
